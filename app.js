@@ -30,17 +30,17 @@ function aplicarExpo() {
 }
 function parar() { run = false; if (stream) stream.getTracks().forEach(t => t.stop()); stream = null; v.srcObject = null; gO.clearRect(0, 0, ov.width, ov.height); $("btnCam").textContent = "Iniciar cámara"; est("Cámara apagada"); }
 const camSel = $("camSel");
-const abrir = id => navigator.mediaDevices.getUserMedia({ video: { ...(id ? { deviceId: { exact: id } } : { facingMode: { ideal: "environment" } }), width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
+const abrirCam = id => navigator.mediaDevices.getUserMedia({ video: { ...(id ? { deviceId: { exact: id } } : { facingMode: { ideal: "environment" } }), width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
 const esAncha = l => /ultra|wide|0\.5|macro|depth|tele|angular/i.test(l);   // se evitan las lentes que no son la principal
 const aplicarZoom = z => { try { stream.getVideoTracks()[0].applyConstraints({ advanced: [{ zoom: +z }] }); } catch (e) { } };
 async function iniciar() {
   try {
     const saved = localStorage.getItem("cam");
-    try { stream = await abrir(saved); } catch (e) { stream = await abrir(null); }
+    try { stream = await abrirCam(saved); } catch (e) { stream = await abrirCam(null); }
     const devs = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === "videoinput");
     let cur = stream.getVideoTracks()[0].getSettings().deviceId;
     if (!saved) { const c = devs.find(d => /back|rear|trasera|environment/i.test(d.label) && !esAncha(d.label));
-      if (c && c.deviceId !== cur) { stream.getTracks().forEach(t => t.stop()); stream = await abrir(c.deviceId); cur = c.deviceId; } }
+      if (c && c.deviceId !== cur) { stream.getTracks().forEach(t => t.stop()); stream = await abrirCam(c.deviceId); cur = c.deviceId; } }
     camSel.innerHTML = devs.map((d, i) => `<option value="${d.deviceId}">${esc(d.label || "Cámara " + (i + 1))}</option>`).join(""); camSel.value = cur;
     $("camBox").classList.remove("hide");
     v.srcObject = stream; await v.play();
@@ -96,7 +96,7 @@ async function capturar(d) {
   if (navigator.vibrate) navigator.vibrate(120);
   toast("📸 Foto guardada · tocá para agregar información", rec.id); cuenta();
 }
-function toast(t, id) { const e = $("toast"); e.textContent = t; e.classList.remove("hide"); e.onclick = () => { e.classList.add("hide"); abrir(id); }; clearTimeout(toast.h); toast.h = setTimeout(() => e.classList.add("hide"), 4000); }
+function toast(t, id) { const e = $("toast"); e.textContent = t; e.classList.remove("hide"); e.onclick = () => { e.classList.add("hide"); abrirFoto(id); }; clearTimeout(toast.h); toast.h = setTimeout(() => e.classList.add("hide"), 4000); }
 
 // ---------- galería y edición ----------
 async function cuenta() { const n = (await all()).length; $("cnt").textContent = n ? "(" + n + ")" : ""; }
@@ -107,10 +107,10 @@ async function galeria() {
   const f = $("q").value.trim().toLowerCase();
   const l = (await all()).sort((a, b) => b.id - a.id).filter(r => !f || CAMPOS.some(c => String(r[c.k] || "").toLowerCase().includes(f)));
   $("grid").innerHTML = l.length ? l.map(r => { const u = URL.createObjectURL(r.blob); urls.push(u);
-    return `<div class="th" onclick="abrir(${r.id})"><img src="${u}"><div><b>${esc(r.titulo) || "Sin título"}</b><br><span class="lb">${fechaDe(r.id)}</span></div></div>`; }).join("") : '<div class="card" style="grid-column:1/3">Sin fotos todavía.</div>';
+    return `<div class="th" onclick="abrirFoto(${r.id})"><img src="${u}"><div><b>${esc(r.titulo) || "Sin título"}</b><br><span class="lb">${fechaDe(r.id)}</span></div></div>`; }).join("") : '<div class="card" style="grid-column:1/3">Sin fotos todavía.</div>';
   cuenta();
 }
-window.abrir = async id => {
+window.abrirFoto = async id => {
   const r = await get(id); if (!r) return; const u = URL.createObjectURL(r.blob);
   const campos = CAMPOS.map(c => `<label class="lb">${esc(c.l)}</label>` + (c.area ? `<textarea id="f_${c.k}" rows="3">${esc(r[c.k])}</textarea>` : `<input id="f_${c.k}" value="${esc(r[c.k])}">`)).join("");
   $("det").innerHTML = `<img src="${u}"><p class="lb">${fechaDe(r.id)} · punto en ${r.xp}% x, ${r.yp}% y${r.editado ? " · editado " + new Date(r.editado).toLocaleString("es-AR") : ""}</p>${campos}
