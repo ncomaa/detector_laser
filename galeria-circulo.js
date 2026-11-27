@@ -25,6 +25,11 @@
     const height = img.naturalHeight || img.height;
     if (!width || !height) return;
 
+    const xs = Array.isArray(registro.xpList) ? registro.xpList : [registro.xp];
+    const ys = Array.isArray(registro.ypList) ? registro.ypList : [registro.yp];
+    const points = xs.map((x, i) => ({ x: Number(x), y: Number(ys[i]) })).filter(p => Number.isFinite(p.x) && Number.isFinite(p.y));
+    if (!points.length) return;
+
     const baseRadius = Math.max(28, width * 0.045);
     const key = `laser-circle-scale-${id}`;
     const savedScale = Number(localStorage.getItem(key)) || 1;
@@ -37,55 +42,32 @@
     svg.setAttribute("preserveAspectRatio", "none");
     svg.setAttribute("aria-hidden", "true");
     svg.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none;";
-    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    circle.setAttribute("cx", String(width * Number(registro.xp || 50) / 100));
-    circle.setAttribute("cy", String(height * Number(registro.yp || 50) / 100));
-    circle.setAttribute("fill", "none");
-    circle.setAttribute("stroke", "#00ff6a");
-    circle.setAttribute("stroke-width", String(Math.max(4, width / 250)));
-    circle.setAttribute("stroke-linejoin", "round");
-    svg.appendChild(circle);
+    const circles = points.map(point => {
+      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute("cx", String(width * point.x / 100));
+      circle.setAttribute("cy", String(height * point.y / 100));
+      circle.setAttribute("fill", "none");
+      circle.setAttribute("stroke", "#00ff6a");
+      circle.setAttribute("stroke-width", String(Math.max(4, width / 250)));
+      svg.appendChild(circle);
+      return circle;
+    });
     wrapper.appendChild(svg);
 
     const controls = document.createElement("div");
     controls.className = "card";
-    controls.innerHTML = '<label for="circleScale">Tamaño del círculo: <b id="circleScaleValue"></b></label><input id="circleScale" type="range" min="0.5" max="2.5" step="0.05" aria-label="Agrandar o achicar el círculo que rodea el láser"><span class="lb">Ajuste visual de esta foto en la galería.</span>';
+    controls.innerHTML = '<label for="circleScale">Tamaño del círculo: <b id="circleScaleValue"></b></label><input id="circleScale" type="range" min="0.5" max="2.5" step="0.05" aria-label="Agrandar o achicar los círculos que rodean los láseres"><span class="lb">Ajuste visual de esta foto en la galería.</span>';
     wrapper.insertAdjacentElement("afterend", controls);
     const range = controls.querySelector("input");
     const value = controls.querySelector("b");
     range.value = String(Math.min(2.5, Math.max(0.5, savedScale)));
     const update = () => {
       const scale = Number(range.value);
-      circle.setAttribute("r", String(baseRadius * scale));
+      circles.forEach(circle => circle.setAttribute("r", String(baseRadius * scale)));
       value.textContent = `${scale.toFixed(2)}×`;
       localStorage.setItem(key, String(scale));
     };
     range.addEventListener("input", update);
     update();
-  };
-
-  // La captura conserva la foto original sin dibujar el círculo. El círculo
-  // ajustable se superpone únicamente al mostrar la imagen en la galería.
-  capturar = async d => {
-    const c = document.createElement("canvas");
-    c.width = v.videoWidth;
-    c.height = v.videoHeight;
-    const g = c.getContext("2d");
-    g.drawImage(v, 0, 0);
-    const x = d.x / AW * c.width;
-    const y = d.y / AH * c.height;
-    const blob = await new Promise(resolve => c.toBlob(resolve, "image/jpeg", 0.9));
-    const rec = {
-      id: Date.now(),
-      blob,
-      xp: +(x / c.width * 100).toFixed(1),
-      yp: +(y / c.height * 100).toFixed(1),
-      editado: null
-    };
-    CAMPOS.forEach(f => rec[f.k] = "");
-    await put(rec);
-    if (navigator.vibrate) navigator.vibrate(120);
-    toast("📸 Foto guardada · tocá para agregar información", rec.id);
-    cuenta();
   };
 })();

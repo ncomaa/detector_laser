@@ -18,6 +18,16 @@
     <label class="sw"><input type="checkbox" id="test"> Modo prueba (marca en pantalla lo detectado)</label>
     <label class="sw"><input type="checkbox" id="expo"> Reducir exposición (si el celular lo permite)</label>
   </div>
+  <div class="card" id="multiBox">
+    <b>Captura de varios puntos</b>
+    <p class="lb">Dejá la cámara fija. Se registrará cada punto láser detectado y se guardará una foto al llegar al tiempo o a la cantidad elegidos.</p>
+    <label for="multiSeconds">Duración (segundos, 1–120)</label>
+    <input id="multiSeconds" type="number" min="1" max="120" step="1" value="10">
+    <label for="multiLimit">Límite de puntos (1–50)</label>
+    <input id="multiLimit" type="number" min="1" max="50" step="1" value="5">
+    <button class="b" id="multiStart">Iniciar captura múltiple</button>
+    <div id="multiStatus" class="lb" aria-live="polite"></div>
+  </div>
 </section>
 <section id="gal" class="hide">
   <input id="q" placeholder="Buscar por título, lugar, etiquetas...">
@@ -26,6 +36,6 @@
 </section>
 </main>
 <div id="det" class="hide"></div><div id="toast" class="hide"></div>
-<script src="config.js"></script><script src="detector.js"></script><script src="app.js"></script><script src="galeria-circulo.js"></script>
+<script src="config.js"></script><script src="detector.js"></script><script src="app.js"></script><script src="galeria-circulo.js"></script><script src="multi-puntos.js"></script>
 <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){});}</script>
 </body></html>
