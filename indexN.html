@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Laser·Mark</title><link rel="stylesheet" href="estilos.css">
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#16130f"><link rel="icon" href="icon-192.png"></head>
+<body>
+<div id="cam">
+  <video id="v" playsinline muted autoplay></video><canvas id="ov"></canvas><div class="vg"></div>
+  <i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i><i class="cross"></i>
+  <div class="top"><span><b>Laser·Mark</b><small>v2</small></span><span id="hud" class="hud">INICIANDO</span></div>
+  <button id="btnCamSig" class="sq hide" aria-label="Cambiar de cámara">⟲</button>
+  <div id="aviso" class="aviso hide"><p id="avTxt"></p><button id="btnAct">Reintentar</button></div>
+  <div class="bar">
+    <button id="btnGal" class="pb">Archivo<span id="cnt">00</span></button>
+    <button id="btnObt" class="obt" aria-label="Capturar ahora"></button>
+    <button id="btnAj" class="pb">Ajustes</button>
+  </div>
+</div>
+<section id="gal" class="hide">
+  <header><button class="o" data-back>◂ Cámara</button><h2>Archivo</h2></header>
+  <div class="tools"><input id="q" placeholder="Buscar por título, lugar, etiquetas..."><button class="o" id="bFav">★ Todas</button><button class="o" id="bOrd">Más nuevas</button></div>
+  <div id="grid"></div>
+</section>
+<section id="aj" class="hide">
+  <header><button class="o" data-back>◂ Cámara</button><h2>Ajustes</h2></header>
+  <div id="ajc"></div>
+</section>
+<section id="det" class="hide"></section>
+<div id="toast" class="hide"></div>
+<script src="config.js"></script><script src="detector.js"></script><script src="app.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){});}</script>
+</body></html>
