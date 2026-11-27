@@ -15,6 +15,7 @@
     <div id="zoomBox" class="hide"><label>Zoom: <b id="zv"></b></label><input type="range" id="zoom"></div>
     <label>Sensibilidad: <b id="sv"></b> <span class="lb">(más alta = detecta más, pero con más falsos positivos)</span></label>
     <input type="range" id="sens" min="1" max="10">
+    <label class="sw"><input type="checkbox" id="greenLaser"> También detectar láser verde</label>
     <label class="sw"><input type="checkbox" id="test"> Modo prueba (marca en pantalla lo detectado)</label>
     <label class="sw"><input type="checkbox" id="expo"> Reducir exposición (si el celular lo permite)</label>
   </div>
@@ -36,6 +37,6 @@
 </section>
 </main>
 <div id="det" class="hide"></div><div id="toast" class="hide"></div>
-<script src="config.js"></script><script src="detector.js"></script><script src="app.js"></script><script src="galeria-circulo.js"></script><script src="multi-puntos.js"></script>
+<script src="config.js"></script><script src="detector.js"></script><script src="app.js"></script><script src="opciones-laser.js"></script><script src="galeria-circulo.js"></script><script src="multi-puntos.js"></script>
 <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){});}</script>
 </body></html>

@@ -1,7 +1,7 @@
 // sw.js — funciona sin internet, pero SIEMPRE busca primero la versión nueva en la red.
 // Cambiar el número de versión cada vez que se actualicen archivos.
-const V = "laser-v6";
-const A = ["./", "./index.html", "./app.js", "./config.js", "./detector.js", "./multi-puntos.js", "./galeria-circulo.js", "./estilos.css", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
+const V = "laser-v7";
+const A = ["./", "./index.html", "./app.js", "./config.js", "./detector.js", "./opciones-laser.js", "./multi-puntos.js", "./galeria-circulo.js", "./estilos.css", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(V).then(c => Promise.all(A.map(u => fetch(u, { cache: "reload" }).then(r => c.put(u, r))))));
   self.skipWaiting();
