@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Detector Láser</title><link rel="stylesheet" href="estilos.css">
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#111827"><link rel="icon" href="icon-192.png"></head>
+<body>
+<header>Detector de puntero láser</header>
+<nav id="nav"><button data-v="cam" class="on">Cámara</button><button data-v="gal">Galería <span id="cnt"></span></button></nav>
+<main>
+<section id="cam">
+  <div id="stage"><video id="v" playsinline muted autoplay></video><canvas id="ov"></canvas></div>
+  <div id="est" class="est">Cámara apagada</div>
+  <button class="b" id="btnCam">Iniciar cámara</button>
+  <div class="card">
+    <label>Sensibilidad: <b id="sv"></b> <span class="lb">(más alta = detecta más, pero con más falsos positivos)</span></label>
+    <input type="range" id="sens" min="1" max="10">
+    <label class="sw"><input type="checkbox" id="test"> Modo prueba (marca en pantalla lo detectado)</label>
+    <label class="sw"><input type="checkbox" id="expo"> Reducir exposición (si el celular lo permite)</label>
+  </div>
+</section>
+<section id="gal" class="hide">
+  <input id="q" placeholder="Buscar por título, lugar, etiquetas...">
+  <div id="grid"></div>
+  <button class="b s" id="btnExp">Exportar datos (JSON)</button>
+</section>
+</main>
+<div id="det" class="hide"></div><div id="toast" class="hide"></div>
+<script src="config.js"></script><script src="detector.js"></script><script src="app.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){});}</script>
+</body></html>
