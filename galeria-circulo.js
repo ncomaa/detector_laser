@@ -63,4 +63,29 @@
     range.addEventListener("input", update);
     update();
   };
+
+  // La captura conserva la foto original sin dibujar el círculo. El círculo
+  // ajustable se superpone únicamente al mostrar la imagen en la galería.
+  capturar = async d => {
+    const c = document.createElement("canvas");
+    c.width = v.videoWidth;
+    c.height = v.videoHeight;
+    const g = c.getContext("2d");
+    g.drawImage(v, 0, 0);
+    const x = d.x / AW * c.width;
+    const y = d.y / AH * c.height;
+    const blob = await new Promise(resolve => c.toBlob(resolve, "image/jpeg", 0.9));
+    const rec = {
+      id: Date.now(),
+      blob,
+      xp: +(x / c.width * 100).toFixed(1),
+      yp: +(y / c.height * 100).toFixed(1),
+      editado: null
+    };
+    CAMPOS.forEach(f => rec[f.k] = "");
+    await put(rec);
+    if (navigator.vibrate) navigator.vibrate(120);
+    toast("📸 Foto guardada · tocá para agregar información", rec.id);
+    cuenta();
+  };
 })();
